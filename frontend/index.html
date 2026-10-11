@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saksham_AI - Real-time LLM Prompt Coaching & Cost Intelligence</title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for BI Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Application Stylesheets -->
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/diff.css">
+</head>
+<body>
+
+  <!-- Ambient Glowing Background Orbs -->
+  <div class="ambient-glow">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+    <div class="glow-orb-3"></div>
+  </div>
+
+  <div class="app-wrapper">
+
+    <!-- Top Navigation & Brand Bar -->
+    <header class="app-header">
+      <div class="brand-section">
+        <div class="brand-logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <div>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span class="brand-title">Saksham_AI</span>
+            <span class="brand-badge">PRE-SEND COACH</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs">
+        <button class="nav-tab-btn active" data-tab="studio">
+          <span>⚡</span> Prompt Studio
+        </button>
+        <button class="nav-tab-btn" data-tab="analytics">
+          <span>📊</span> BI & Analytics
+        </button>
+        <button class="nav-tab-btn" data-tab="pricing">
+          <span>🏷️</span> Model Matrix
+        </button>
+        <button class="nav-tab-btn" data-tab="architecture">
+          <span>📐</span> Architecture & Pitch
+        </button>
+      </nav>
+
+      <!-- Status Center -->
+      <div class="header-actions">
+        <div class="status-pill">
+          <span class="pulse-dot"></span>
+          <span>Engine Active</span>
+        </div>
+        <div class="editor-stat-pill" id="latencyBadge" style="font-family:'JetBrains Mono', monospace; color:#38bdf8;">
+          ⚡ 12ms
+        </div>
+      </div>
+    </header>
+
+    <!-- Eyebrow Tagline -->
+    <div class="hero-banner">
+      <div class="eyebrow-chip">
+        <span>✦ Real-Time Prompt Coaching & Token Intelligence</span>
+      </div>
+      <h1>Stop Burning Tokens Before You Send.</h1>
+      <p>Instant token counting, cost modeling, efficiency scoring, tighter rewrites, and small-model routing for high-scale LLM teams.</p>
+    </div>
+
+    <!-- ====================================================================
+         TAB 1: LIVE PROMPT STUDIO (COCKPIT)
+         ==================================================================== -->
+    <div class="tab-content-panel active" id="tab-studio">
+      <div class="studio-grid">
+        
+        <!-- Left Column: The Prompt Cockpit & Rewriter -->
+        <div class="editor-column">
+          <div class="editor-card">
+            
+            <!-- Editor Toolbar -->
+            <div class="editor-toolbar">
+              <div class="toolbar-left">
+                <div class="model-select-wrapper">
+                  <label for="modelSelect">Target Model:</label>
+                  <select id="modelSelect" class="styled-select"></select>
+                </div>
+                <div class="model-select-wrapper">
+                  <label for="sampleSelect">Sample:</label>
+                  <select id="sampleSelect" class="styled-select sample-selector"></select>
+                </div>
+              </div>
+              
+              <div class="toolbar-right">
+                <button id="clearPromptBtn" class="btn-ghost-sm">Clear</button>
+              </div>
+            </div>
+
+            <!-- Textarea -->
+            <div class="textarea-container">
+              <textarea 
+                id="promptInput" 
+                class="prompt-textarea" 
+                placeholder="Type or paste your prompt here... Saksham_AI will analyze token consumption, efficiency, and projected costs in real time (~300ms debounced)..."
+                spellcheck="false"
+              ></textarea>
+            </div>
+
+            <!-- Bottom Bar with Metrics & Actions -->
+            <div class="editor-bottom-bar">
+              <div class="editor-stats-badges">
+                <span class="editor-stat-pill" id="wordCountBadge">0 words</span>
+                <span class="editor-stat-pill" id="charCountBadge">0 chars</span>
+                <span class="editor-stat-pill" id="tokenCountPill" style="color:#a78bfa; font-weight:700;">0 tokens</span>
+                <span class="editor-stat-pill" id="tokenizerPill" style="color:#38bdf8; font-size:0.72rem;">tiktoken</span>
+              </div>
+
+              <div class="editor-actions">
+                <button id="logPromptBtn" class="btn-glow-primary">
+                  <span>💾</span> Save & Log to SQL DB
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Rewrite & Diff Card -->
+          <div class="rewrite-card" id="rewriteCard" style="display:none;">
+            <div class="rewrite-header">
+              <div class="rewrite-title-group">
+                <span class="sparkle-icon">✨</span>
+                <h3 style="font-size:0.95rem; font-weight:700; color:#fff;">Tighter Rewrite Suggestion</h3>
+                <span class="rewrite-savings-tag" id="rewriteSavingsTag">-0 tokens (-0%)</span>
+              </div>
+              <button id="applyRewriteBtn" class="btn-glow-primary" style="padding:0.4rem 0.9rem; font-size:0.8rem;">
+                Accept Rewrite
+              </button>
+            </div>
+
+            <div class="diff-legend">
+              <span class="diff-legend-item"><span class="diff-legend-chip diff-chip-removed"></span> Removed Token Fluff</span>
+              <span class="diff-legend-item"><span class="diff-legend-chip diff-chip-added"></span> Optimized Phrasing</span>
+            </div>
+
+            <div class="rewrite-body">
+              <div id="rewriteDiffContainer" class="diff-container"></div>
+            </div>
+
+            <div class="rewrite-rationale" id="rewriteRationaleText"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Real-time Coach HUD & Analytics Meters -->
+        <div class="coach-hud-column">
+          
+          <!-- Efficiency Score Card -->
+          <div class="hud-card">
+            <div class="hud-card-header">
+              <span class="hud-card-title">
+                <span>🎯</span> Prompt Efficiency Score
+              </span>
+              <span id="efficiencyBadge" class="efficiency-rating-badge badge-emerald">Optimal</span>
+            </div>
+
+            <div class="efficiency-gauge-container">
+              <div class="svg-gauge-box">
+                <svg viewBox="0 0 100 100">
+                  <circle class="gauge-bg-circle" cx="50" cy="50" r="45"></circle>
+                  <circle id="gaugeCircle" class="gauge-progress-circle" cx="50" cy="50" r="45"></circle>
+                </svg>
+                <div class="gauge-center-text">
+                  <div id="gaugeScoreText" class="gauge-score-number">85</div>
+                  <div class="gauge-score-label">/ 100</div>
+                </div>
+              </div>
+
+              <div class="efficiency-meta-box">
+                <div id="followUpRiskText" class="follow-up-risk-text">Follow-up Risk: Low</div>
+                <div style="font-size:0.75rem; color:#94a3b8; margin-top:0.4rem;">
+                  Heuristic scoring based on token density, conversational fluffs, vagueness, and output schema boundaries.
+                </div>
+              </div>
+            </div>
+
+            <!-- Diagnostics Issues List -->
+            <div id="issuesContainer" class="issues-container"></div>
+            <div id="positivesContainer" class="issues-container" style="margin-top:0.5rem;"></div>
+          </div>
+
+          <!-- Cost Estimation Card -->
+          <div class="hud-card">
+            <div class="hud-card-header">
+              <span class="hud-card-title">
+                <span>💰</span> API Cost Estimation
+              </span>
+              <span style="font-size:0.72rem; color:#94a3b8;">Price Table Calibrated</span>
+            </div>
+
+            <div class="cost-metric-grid">
+              <div class="cost-box">
+                <div class="cost-box-label">Single Request</div>
+                <div id="singleCostVal" class="cost-box-value">$0.00000</div>
+                <div id="costRangeSub" class="cost-box-sub">Range: $0.00 - $0.00</div>
+              </div>
+
+              <div class="cost-box">
+                <div class="cost-box-label">10,000 Invocations</div>
+                <div id="scale10kCostVal" class="cost-box-value" style="color:#38bdf8;">$0.00</div>
+                <div class="cost-box-sub">Batch Scale Run</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Model Recommendation Box -->
+          <div class="model-rec-card">
+            <div class="rec-header-row">
+              <span class="hud-card-title" style="color:#22d3ee;">
+                <span>🚀</span> Task Routing
+              </span>
+              <span id="recComplexityBadge" class="task-complexity-badge">Simple Task</span>
+            </div>
+
+            <div id="recModelTitle" class="rec-body-highlight">Switch to GPT-4o-mini</div>
+            <div id="recSavingsHighlight" class="rec-savings-highlight">Save 94% ($0.023 / call)</div>
+            <p id="recGuidanceText" class="rec-guidance-text">
+              Simple classification, extraction, and formatting tasks achieve near-identical accuracy on compact models at ~94% lower cost.
+            </p>
+
+            <button id="applyModelBtn" class="btn-glow-primary" style="padding:0.4rem 0.9rem; font-size:0.78rem;">
+              Switch Model
+            </button>
+          </div>
+
+          <!-- Environmental Footprint Card -->
+          <div class="hud-card">
+            <div class="hud-card-header">
+              <span class="hud-card-title" style="color:#34d399;">
+                <span>🌱</span> Environmental Footprint
+              </span>
+              <span style="font-size:0.72rem; color:#34d399;">Eco-Estimate</span>
+            </div>
+
+            <div class="eco-metrics-row">
+              <div class="eco-box">
+                <div id="ecoEnergyVal" class="eco-value">0.00 Wh</div>
+                <div class="eco-label">Inference Energy</div>
+              </div>
+              <div class="eco-box">
+                <div id="ecoCarbonVal" class="eco-value">0.00 g</div>
+                <div class="eco-label">CO2e Carbon</div>
+              </div>
+            </div>
+
+            <div style="font-size:0.76rem; color:#94a3b8; margin-bottom:0.5rem;">
+              Equivalent to <strong id="ecoEquivVal" style="color:#fff;">0.0s LED</strong> bulb run time.
+            </div>
+
+            <div class="eco-citations-note">
+              Based on empirical research by <em>Luccioni et al. (2023)</em> & <em>Patterson et al. (2021)</em>.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         TAB 2: BI & ANALYTICS DASHBOARD
+         ==================================================================== -->
+    <div class="tab-content-panel" id="tab-analytics">
+      <div class="bi-dashboard-container">
+        
+        <!-- Executive KPI Cards -->
+        <div class="bi-kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span>Total Prompts Tracked</span>
+              <span>📈</span>
+            </div>
+            <div class="kpi-card-value" id="kpiTotalPrompts">0</div>
+            <div class="kpi-card-trend">Verifiable Audit Records</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span>Total Spend Modeled</span>
+              <span>💳</span>
+            </div>
+            <div class="kpi-card-value" id="kpiTotalSpend">$0.00</div>
+            <div class="kpi-card-trend" style="color:#94a3b8;">Across All Model Tiers</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span>Identified Cost Savings</span>
+              <span>💸</span>
+            </div>
+            <div class="kpi-card-value" id="kpiTotalSavings" style="color:#34d399;">$0.00</div>
+            <div class="kpi-card-trend">Via Small-Model Routing & Rewrites</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-card-header">
+              <span>Average Efficiency</span>
+              <span>🎯</span>
+            </div>
+            <div class="kpi-card-value" id="kpiAvgEfficiency" style="color:#38bdf8;">0 / 100</div>
+            <div class="kpi-card-trend">Prevention Quality Index</div>
+          </div>
+        </div>
+
+        <!-- 2-Column Charts Grid -->
+        <div class="charts-grid-2col">
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h4 class="chart-card-title">30-Day Cost vs Savings Realization Trend</h4>
+                <p class="chart-card-desc">Daily actual spend vs identified optimization opportunities</p>
+              </div>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="trendChartCanvas"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h4 class="chart-card-title">Model Spend & Token Distribution</h4>
+                <p class="chart-card-desc">Relative token consumption by model</p>
+              </div>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="modelDistChartCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team Breakdown Chart -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <div>
+              <h4 class="chart-card-title">Departmental Spend & Optimization Performance</h4>
+              <p class="chart-card-desc">Comparing team-level LLM budget efficiency</p>
+            </div>
+          </div>
+          <div class="chart-canvas-wrapper" style="height:220px;">
+            <canvas id="teamChartCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Tabular Audit Trail Table -->
+        <div class="table-card">
+          <div class="table-header-bar">
+            <div class="table-title-group">
+              <h3>SQL Usage History & Prevention Audit Log</h3>
+              <p>Relational SQLite store linking prompt hash, tokens, cost, efficiency, and verifiable timestamps</p>
+            </div>
+
+            <div class="table-controls">
+              <input type="text" id="tableSearchInput" class="search-input" placeholder="Search prompt hash, text, model...">
+              <select id="teamFilterSelect" class="styled-select" style="font-size:0.8rem; padding:0.4rem 1.4rem 0.4rem 0.7rem;">
+                <option value="all">All Teams</option>
+                <option value="Core Engineering">Core Engineering</option>
+                <option value="Data & Analytics">Data & Analytics</option>
+                <option value="Product Ops">Product Ops</option>
+                <option value="Customer Success">Customer Success</option>
+              </select>
+              <button id="exportCsvBtn" class="btn-secondary" style="font-size:0.8rem; padding:0.4rem 0.85rem;">
+                <span>📥</span> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="modern-table">
+              <thead>
+                <tr>
+                  <th>Hash</th>
+                  <th>Prompt Preview</th>
+                  <th>Model</th>
+                  <th>Task</th>
+                  <th>Tokens</th>
+                  <th>Cost</th>
+                  <th>Savings</th>
+                  <th>Score</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="auditLogsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         TAB 3: MODEL MATRIX & PRICING
+         ==================================================================== -->
+    <div class="tab-content-panel" id="tab-pricing">
+      <div class="pricing-matrix-container">
+        
+        <div class="pricing-calc-bar">
+          <div>
+            <h3 style="font-size:1.15rem; font-weight:700; color:#fff;">Live Model Pricing Matrix</h3>
+            <p style="font-size:0.82rem; color:#94a3b8;">Dynamic pricing table per 1,000,000 input & output tokens across top industry providers.</p>
+          </div>
+
+          <div class="calc-input-group">
+            <label for="pricingCalcInput">Simulate Prompt Tokens:</label>
+            <input type="number" id="pricingCalcInput" class="calc-number-input" value="1000" min="50" step="100">
+            <button class="btn-secondary" onclick="renderPricingMatrix()" style="padding:0.45rem 0.85rem;">Recalculate</button>
+          </div>
+        </div>
+
+        <div id="pricingCardsGrid" class="pricing-cards-grid"></div>
+
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         TAB 4: ARCHITECTURE & INTERVIEW BLUEPRINT
+         ==================================================================== -->
+    <div class="tab-content-panel" id="tab-architecture">
+      <div class="arch-blueprint-container">
+        
+        <div class="arch-visual-box">
+          <div class="hero-banner" style="margin-bottom:1.5rem;">
+            <h2>System Architecture Blueprint</h2>
+            <p>End-to-end design connecting real-time debounced edge capture to FastAPI, SQL telemetry, and BI analytics.</p>
+          </div>
+
+          <div class="arch-flow-diagram">
+            
+            <div class="diagram-node">
+              <div class="diagram-node-title">1. Client Layer (Browser / Web Editor / IDE Extension)</div>
+              <div class="diagram-node-desc">Debounced keystroke stream (~300-500ms) with zero UI freezing, real-time typing coach HUD, and diff inspector</div>
+            </div>
+
+            <div class="diagram-arrow">▼</div>
+
+            <div class="diagram-node" style="border-color:#8b5cf6;">
+              <div class="diagram-node-title">2. Backend Gateway (Python + FastAPI)</div>
+              <div class="diagram-node-desc">High-concurrency async REST endpoints serving /api/analyze, /api/rewrite, /api/log</div>
+              
+              <div class="diagram-engines-grid">
+                <div class="engine-chip">
+                  <strong>Tokenizer Engine</strong>
+                  <span>tiktoken (cl100k / o200k) + model calibration</span>
+                </div>
+                <div class="engine-chip">
+                  <strong>Cost Calculator</strong>
+                  <span>Price tables per 1M in/out tokens + scale projections</span>
+                </div>
+                <div class="engine-chip">
+                  <strong>Efficiency Scorer</strong>
+                  <span>Weighted heuristic rule-base (0-100 score + diagnostics)</span>
+                </div>
+                <div class="engine-chip">
+                  <strong>Prompt Rewriter</strong>
+                  <span>Deterministic compression + word diff + savings report</span>
+                </div>
+                <div class="engine-chip">
+                  <strong>Model Recommender</strong>
+                  <span>Task classifier (Simple vs Complex) + routing delta</span>
+                </div>
+                <div class="engine-chip">
+                  <strong>Impact Estimator</strong>
+                  <span>Wh energy & g CO2e carbon citing Luccioni & Patterson</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="diagram-arrow">▼</div>
+
+            <div class="diagram-node" style="border-color:#10b981;">
+              <div class="diagram-node-title">3. Relational Storage Layer (SQLite / PostgreSQL)</div>
+              <div class="diagram-node-desc">Audit trail: prompt hash, token metrics, cost USD, savings delta, score, department team, user, timestamps</div>
+            </div>
+
+            <div class="diagram-arrow">▼</div>
+
+            <div class="diagram-node" style="border-color:#38bdf8;">
+              <div class="diagram-node-title">4. Business Intelligence & Analytics (Power BI / Dashboard)</div>
+              <div class="diagram-node-desc">Executive KPI summaries, 30-day savings trends, model breakdown doughnut, CSV export pipeline for enterprise BI</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Interview Talking Points Guide -->
+        <div class="interview-guide-grid">
+          
+          <div class="interview-card">
+            <div class="interview-card-header">
+              <span>🎯</span> Problem & The "Prevention Gap"
+            </div>
+            <div class="interview-card-body">
+              <strong>Key Pitch:</strong> Traditional LLM cost governance is exclusively post-facto: teams receive a massive bill at month's end and look at retrospective dashboards. By then, the money is already gone. 
+              <br><br>
+              <strong>The Gap:</strong> Saksham_AI introduces <em>prevention at keystroke time</em>. Vague prompts trigger costly follow-up messages where the entire context window is resent, multiplying spend. Saksham_AI prevents this before the prompt ever hits the wire.
+            </div>
+          </div>
+
+          <div class="interview-card">
+            <div class="interview-card-header">
+              <span>📊</span> Why This Links to Data & Analytics
+            </div>
+            <div class="interview-card-body">
+              <strong>Key Pitch:</strong> This is a core data and analytics project. It captures granular telemetry, models multi-variable pricing and environmental footprints, writes to a relational SQL schema, and surfaces actionable business intelligence.
+              <br><br>
+              <strong>BI Impact:</strong> Enterprise leaders can track optimization adoption, calculate realized vs missed ROI, and export data directly into Power BI to govern organizational AI spending.
+            </div>
+          </div>
+
+          <div class="interview-card">
+            <div class="interview-card-header">
+              <span>⚙️</span> Token Counting & Nuances
+            </div>
+            <div class="interview-card-body">
+              <strong>Key Pitch:</strong> A token is not a word; roughly 4 characters or ~0.75 words in English. Different LLM architectures use different vocabulary tokenizers (e.g. OpenAI uses Byte-Pair Encoding cl100k/o200k, while Claude and Gemini utilize proprietary variations).
+              <br><br>
+              <strong>Accuracy:</strong> Local counting via tiktoken provides sub-millisecond pre-send speed; post-execution, the verifiable API response figures audit the actual usage.
+            </div>
+          </div>
+
+          <div class="interview-card">
+            <div class="interview-card-header">
+              <span>⚖️</span> Heuristic vs LLM Judge Trade-off
+            </div>
+            <div class="interview-card-body">
+              <strong>Key Pitch:</strong> Using an LLM to evaluate every keystroke is economically flawed and creates high latency. Saksham_AI uses a deterministic 0-100 weighted heuristic engine running in &lt;1ms at $0 cost.
+              <br><br>
+              <strong>Breakeven Insight:</strong> A rewrite itself costs tokens. For single one-off queries, local compression pays off immediately, whereas an LLM rewriter pays off when prompts are reused (system prompts, batch templates).
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Global Toast Notifications Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/static/js/samples.js"></script>
+  <script src="/static/js/charts.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

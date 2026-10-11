@@ -1,0 +1,68 @@
+/* Diff Styling for Prompt Rewriter */
+.diff-container {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: rgba(10, 14, 23, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.diff-tag-removed {
+  background-color: rgba(244, 63, 94, 0.22);
+  color: #fda4af;
+  text-decoration: line-through;
+  padding: 0.15rem 0.35rem;
+  margin: 0 0.1rem;
+  border-radius: 0.3rem;
+  border-bottom: 1.5px solid rgba(244, 63, 94, 0.6);
+  font-weight: 500;
+}
+
+.diff-tag-added {
+  background-color: rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  padding: 0.15rem 0.35rem;
+  margin: 0 0.1rem;
+  border-radius: 0.3rem;
+  border-bottom: 1.5px solid rgba(16, 185, 129, 0.6);
+  font-weight: 600;
+}
+
+.diff-tag-equal {
+  color: #cbd5e1;
+}
+
+.diff-legend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+.diff-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.diff-legend-chip {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.diff-chip-removed {
+  background: rgba(244, 63, 94, 0.5);
+  border: 1px solid #f43f5e;
+}
+
+.diff-chip-added {
+  background: rgba(16, 185, 129, 0.5);
+  border: 1px solid #10b981;
+}
